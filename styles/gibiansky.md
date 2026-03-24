@@ -167,6 +167,7 @@ module Main {-# WARNING "do not use" #-} where
 import           Prelude
 import           Data.Text (Text)
 import qualified Data.Text as T
+import           Data.Text qualified as Text
 import qualified Data.ByteString (ByteString, pack, unpack)
 import qualified Data.ByteString as BS (pack, unpack)
 import           Control.Monad hiding (forM)

@@ -168,6 +168,7 @@ import qualified Data.ByteString ( ByteString, pack, unpack )
 import qualified Data.ByteString as BS ( pack, unpack )
 import           Data.Text       ( Text )
 import qualified Data.Text       as T
+import           Data.Text qualified as Text
 
 import {-# SOURCE #-} safe qualified "foo" Foo as F
 
