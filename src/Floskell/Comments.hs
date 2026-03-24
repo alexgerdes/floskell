@@ -189,7 +189,7 @@ annotateWithComments src comments =
         -- SrcSpan.  Make sure we assign comments to only one of
         -- them.
         modify $ M.insert ssi ([], [])
-        return $ NodeInfo (srcInfoSpan ssi) (reverse c) (reverse c') False
+        return $ NodeInfo (srcInfoSpan ssi) (reverse c) (reverse c')
 
     surrounding (Comment _ ss _) = (nodeBefore ss, nodeAfter ss)
 

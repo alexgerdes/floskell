@@ -116,13 +116,12 @@ data NodeInfo =
     NodeInfo { nodeInfoSpan             :: !SrcSpan               -- ^ Location info from the parser.
              , nodeInfoLeadingComments  :: ![Comment]  -- ^ Leading comments attached to this node.
              , nodeInfoTrailingComments :: ![Comment] -- ^ Trailing comments attached to this node.
-             , nodeInfoImportQualifiedPost :: !Bool
              }
     deriving ( Show )
 
 -- | Empty NodeInfo
 noNodeInfo :: NodeInfo
-noNodeInfo = NodeInfo (mkSrcSpan noLoc noLoc) [] [] False
+noNodeInfo = NodeInfo (mkSrcSpan noLoc noLoc) [] []
 
 nodeSpan :: Annotated ast => ast NodeInfo -> SrcSpan
 nodeSpan = nodeInfoSpan . ann

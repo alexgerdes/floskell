@@ -771,22 +771,18 @@ instance Pretty WarningText where
 instance Pretty ExportSpec
 
 instance Pretty ImportDecl where
-    prettyPrint imp@ImportDecl{..} = do
-        let postQualified = importQualified && nodeInfoImportQualifiedPost (ann imp)
+    prettyPrint ImportDecl{..} = do
         inter space . map string $
             filter (not . null)
                    [ "import"
                    , if importSrc then "{-# SOURCE #-}" else ""
                    , if importSafe then "safe" else ""
-                   , if importQualified && not postQualified
-                     then "qualified"
-                     else ""
+                   , if importQualified then "qualified" else ""
                    , maybe "" show importPkg
                    ]
         atTabStop stopImportModule
         space
         string $ moduleName importModule
-        when postQualified $ write " qualified"
         mayM_ importAs $ \name -> do
             atTabStop stopImportSpec
             write " as "

@@ -156,8 +156,7 @@ reformatBlock mode config (lines, cpp) =
     case parseModuleWithComments mode code of
         ParseOk (m, comments') ->
             let comments = map makeComment comments'
-                ast = markImportQualifiedPost lines
-                    $ annotateWithComments m (mergeComments comments cpp)
+                ast = annotateWithComments m (mergeComments comments cpp)
             in
                 case prettyPrint (pretty ast) config of
                     Nothing -> Left "Printer failed with mzero call."
@@ -177,44 +176,6 @@ reformatBlock mode config (lines, cpp) =
         then x : mergeComments xs' ys
         else y : mergeComments xs ys'
 
-markImportQualifiedPost :: [Text] -> Module NodeInfo -> Module NodeInfo
-markImportQualifiedPost input (Module l mhead pragmas imports decls) =
-    Module l mhead pragmas (map markImport imports) decls
-  where
-    markImport imp =
-        if importDeclUsesQualifiedPost input imp
-        then amap (\n -> n { nodeInfoImportQualifiedPost = True }) imp
-        else imp
-markImportQualifiedPost _ ast@XmlPage{} = ast
-markImportQualifiedPost _ ast@XmlHybrid{} = ast
-
-importDeclUsesQualifiedPost :: [Text] -> ImportDecl NodeInfo -> Bool
-importDeclUsesQualifiedPost input = hasImportQualifiedPost
-    . TL.unpack
-    . spanText input
-    . nodeSpan
-
-spanText :: [Text] -> SrcSpan -> Text
-spanText input span
-    | startLine == endLine =
-        slice startCol endCol $ getLine startLine
-    | otherwise = TL.intercalate "\n"
-        $ [ TL.drop (fromIntegral $ startCol - 1) (getLine startLine) ]
-       ++ middleLines
-       ++ [ TL.take (fromIntegral endCol) (getLine endLine) ]
-  where
-    startLine = srcSpanStartLine span
-    startCol = srcSpanStartColumn span
-    endLine = srcSpanEndLine span
-    endCol = srcSpanEndColumn span
-
-    getLine n = fromMaybe "" $ atMay input (n - 1)
-
-    middleLines = take (endLine - startLine - 1) $ drop startLine input
-
-    slice a b = TL.take (fromIntegral $ max 0 $ b - a + 1)
-        . TL.drop (fromIntegral $ max 0 $ a - 1)
-
 rewriteImportQualifiedPost :: Text -> Text
 rewriteImportQualifiedPost = TL.pack . rewriteImportQualifiedPostString . TL.unpack
 
@@ -223,9 +184,6 @@ rewriteImportQualifiedPostString line = case findPostQualifiedImport line of
     Just (moduleToken, qualifiedToken) ->
         swapTokens moduleToken qualifiedToken line
     Nothing -> line
-
-hasImportQualifiedPost :: String -> Bool
-hasImportQualifiedPost = isJust . findPostQualifiedImport
 
 findPostQualifiedImport :: String -> Maybe (ImportToken, ImportToken)
 findPostQualifiedImport line = do
@@ -295,11 +253,6 @@ tokenize = go 0
     firstChar acc (x : xs)
         | x == '"' = (reverse (x : acc), xs)
         | otherwise = firstChar (x : acc) xs
-
-atMay :: [a] -> Int -> Maybe a
-atMay xs n
-    | n < 0 = Nothing
-    | otherwise = listToMaybe $ drop n xs
 
 prettyPrint :: Printer a -> Config -> Maybe Text
 prettyPrint printer = fmap (Buffer.toLazyText . psBuffer . snd)
