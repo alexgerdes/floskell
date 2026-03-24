@@ -532,9 +532,7 @@ skipBlankAfterDecl a = case a of
     _ -> False
 
 skipBlankDecl :: Decl NodeInfo -> Decl NodeInfo -> Bool
-skipBlankDecl a b = case (a, b) of
-    (PatBind{}, PatBind{}) -> True
-    _ -> skipBlankAfterDecl a
+skipBlankDecl a _ = skipBlankAfterDecl a
 
 skipBlankClassDecl :: ClassDecl NodeInfo -> ClassDecl NodeInfo -> Bool
 skipBlankClassDecl a _ = case a of
