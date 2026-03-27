@@ -503,7 +503,10 @@ prettyImports is = do
     alignModuleP <- getConfig (cfgAlignImportModule . cfgAlign)
     alignSpecP <- getConfig (cfgAlignImportSpec . cfgAlign)
     let maxNameLength = maximum $ map (length . moduleName . importModule) is
-        alignModule = if alignModuleP then Just 16 else Nothing
+        hasQualifiedImport = any importQualified is
+        alignModule = if alignModuleP && hasQualifiedImport
+                      then Just 16
+                      else Nothing
         alignSpec = if alignSpecP
                     then Just (fromMaybe 0 alignModule + 1 + maxNameLength)
                     else Nothing

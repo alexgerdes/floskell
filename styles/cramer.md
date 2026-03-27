@@ -175,6 +175,14 @@ import {-# SOURCE #-} safe qualified "foo" Foo as F
 import           Prelude
 ```
 
+``` haskell
+import Control.Monad hiding ( forM )
+
+import Data.Text ( Text )
+
+import Prelude
+```
+
 ## Decl
 
 ### TypeDecl
@@ -1042,7 +1050,7 @@ Ignore shebang lines
 
  module Main where
 
- import           Shower
+ import Shower
 
  main :: IO ()
  main = printer "Hello"
